@@ -1,0 +1,8 @@
+version: '3.8'
+services: 
+  app: 
+    build: .
+    ports: 
+      - '8002:8000'
+    image: primos-signup-backend
+    container_name: primos-signup-backend
