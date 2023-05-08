@@ -93,3 +93,4 @@ db.sqlite3
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+primos_signup_backend/secret_key.txt
