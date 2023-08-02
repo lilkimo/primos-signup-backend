@@ -5,3 +5,27 @@ services:
     container_name: primos-signup-backend
     ports: 
       - 8002:8000
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=0
+      - POSTGRES_NAME=primos-signup-backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        window: 120s
+    depends_on:
+      - db
+  db:
+    container_name: primos-signup-database
+    image: postgres:alpine
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=0
+      - POSTGRES_DB=primos-signup-backend
+    ports:
+      - 5433:5432
+volumes:
+  data:
