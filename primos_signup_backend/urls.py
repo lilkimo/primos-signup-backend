@@ -15,6 +15,10 @@ api = NinjaAPI()
 class Schedule(Schema):
     schedule: List[bool]
 
+class Schedules(Schema):
+    bussy_schedule: List[bool]
+    desire_schedule: List[bool]
+
 class Detail(Schema):
     detail: str
 
@@ -31,8 +35,8 @@ class RegisterForm(Schema):
     bussy_schedule: List[bool]
     desire_schedule: List[bool]
 
-@api.post("/schedule", response={200: Schedule, 400: Detail})
-def schedule(_, payload: Credentials):
+@api.post('/schedule', response={200: Schedule, 400: Detail})
+def get_siga_schedule(_, payload: Credentials):
     schedule = [[], [], [], [], [], [], []]
     with Session() as session:
         # Accedemos al SIGA
@@ -54,24 +58,34 @@ def schedule(_, payload: Credentials):
                 schedule[i].append(activity.has_attr('onmouseover'))
 
         return 200, {
-            "schedule": [item for sublist in map(lambda block: block[:utils.num_blocks], schedule[:5]) for item in sublist]
+            'schedule': [item for sublist in map(lambda block: block[:utils.num_blocks], schedule[:5]) for item in sublist]
         }
 
-@api.post("/register", response={200: None, 400: Detail})
+@api.get('/schedule', response={200: Schedules})
+def get_registered_schedule(_, rol: int):
+    try:
+        primo = Primo.objects.get(rol=rol)
+        return 200, {
+            'bussy_schedule': utils.unparse_schedule(primo.bussy_schedule),
+            'desire_schedule': utils.unparse_schedule(primo.desire_schedule),
+        }
+    except Primo.DoesNotExist:
+        return 200, {f'{schedule}_schedule': [False]*5*utils.num_blocks for schedule in ('bussy', 'desire')}
+
+@api.post('/register', response={200: None, 400: Detail})
 def submit(_, payload: RegisterForm):
     if (len(payload.bussy_schedule) != 40 or len(payload.desire_schedule) != 40):
         return 400, {'detail': 'schedule arrays must have 40 items each'}
     
     transformations = {
-        'rol': str(payload.rol),
         'bussy_schedule': utils.parse_schedule(payload.bussy_schedule),
         'desire_schedule': utils.parse_schedule(payload.desire_schedule),
     }
-    Primo.objects.create(**(payload.dict() | transformations))
+    Primo.objects.update_or_create(rol=str(payload.rol), defaults=payload.dict() | transformations)
 
     return 200, None
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", api.urls),
+    path('admin/', admin.site.urls),
+    path('api/', api.urls),
 ]
