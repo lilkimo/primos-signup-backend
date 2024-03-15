@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = r""
+SECRET_KEY = r"B}^Z<WT@l%/-0se::.sFj]n0lwr5]rh0+#L*'Pcdq?,|x+vlTq{&j~\0l~QZ?Ps_lHs"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -125,8 +125,8 @@ USE_TZ = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # HTTPS
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
